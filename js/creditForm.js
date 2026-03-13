@@ -83,12 +83,18 @@ function collectCreditFormData(formEl) {
   };
 
   // ── Firma Digital ──
-  const canvas = document.getElementById('firma-aplicante');
-  if (canvas && isCanvasDrawn(canvas)) {
-    // Si se dibujó algo en el canvas, obtenemos la imagen en base64
-    data.firma_aplicante = canvas.toDataURL('image/png');
+  const canvasAplicante = document.getElementById('firma-aplicante');
+  if (canvasAplicante && checkSignatureDrawn('firma-aplicante')) {
+    data.firma_aplicante = canvasAplicante.toDataURL('image/png');
   } else {
-    data.firma_aplicante = ""; // Canvas en blanco
+    data.firma_aplicante = ""; 
+  }
+
+  const canvasCoAplicante = document.getElementById('firma-co-aplicante');
+  if (canvasCoAplicante && checkSignatureDrawn('firma-co-aplicante')) {
+    data.firma_co_aplicante = canvasCoAplicante.toDataURL('image/png');
+  } else {
+    data.firma_co_aplicante = ""; 
   }
 
   // Metadatos
@@ -125,7 +131,7 @@ function validateCreditForm(formEl) {
 ════════════════════════════════════════════════════════════ */
 
 /**
- * Limpia completamente el formulario de crédito y el canvas de firma.
+ * Limpia completamente el formulario de crédito y los canvas de firma.
  * @param {HTMLFormElement} formEl
  */
 function resetCreditForm(formEl) {
@@ -133,7 +139,8 @@ function resetCreditForm(formEl) {
   formEl.querySelectorAll('input[type="radio"], input[type="checkbox"]')
         .forEach(el => { el.checked = false; });
   formEl.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-  clearSignature();
+  clearSignature('firma-aplicante');
+  clearSignature('firma-co-aplicante');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -209,14 +216,24 @@ function _radio(formEl, name) {
    CANVAS SIGNATURE LOGIC
 ════════════════════════════════════════════════════════════ */
 
-let signaturePad = null;
-let isDrawing = false;
-let hasDrawn = false; // Flag to easily check if canvas is not blank
+// Estado global de los canvas
+const signatureContexts = {};
 
-const canvasEl = document.getElementById('firma-aplicante');
-const ctx = canvasEl ? canvasEl.getContext('2d') : null;
+function initSignatureCanvas(canvasId, clearBtnId) {
+  const canvasEl = document.getElementById(canvasId);
+  const clearBtn = document.getElementById(clearBtnId);
+  if (!canvasEl) return;
 
-if (canvasEl && ctx) {
+  const ctx = canvasEl.getContext('2d');
+  
+  // Guardar estado
+  signatureContexts[canvasId] = {
+    canvas: canvasEl,
+    ctx: ctx,
+    isDrawing: false,
+    hasDrawn: false
+  };
+
   // Configuración de la línea
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
@@ -242,8 +259,8 @@ if (canvasEl && ctx) {
 
   const startPosition = (e) => {
     e.preventDefault();
-    isDrawing = true;
-    hasDrawn = true;
+    signatureContexts[canvasId].isDrawing = true;
+    signatureContexts[canvasId].hasDrawn = true;
     const pos = getPos(e);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
@@ -251,14 +268,14 @@ if (canvasEl && ctx) {
 
   const draw = (e) => {
     e.preventDefault();
-    if (!isDrawing) return;
+    if (!signatureContexts[canvasId].isDrawing) return;
     const pos = getPos(e);
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
   };
 
   const finishedPosition = () => {
-    isDrawing = false;
+    signatureContexts[canvasId].isDrawing = false;
     ctx.closePath();
   };
 
@@ -272,17 +289,25 @@ if (canvasEl && ctx) {
   canvasEl.addEventListener('touchstart', startPosition, { passive: false });
   canvasEl.addEventListener('touchmove', draw, { passive: false });
   canvasEl.addEventListener('touchend', finishedPosition);
-}
 
-document.getElementById('btn-limpiar-firma')?.addEventListener('click', clearSignature);
-
-function clearSignature() {
-  if (canvasEl && ctx) {
-    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
-    hasDrawn = false;
+  // Botón limpiar
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => clearSignature(canvasId));
   }
 }
 
-function isCanvasDrawn(canvas) {
-  return hasDrawn;
+function clearSignature(canvasId) {
+  const state = signatureContexts[canvasId];
+  if (state && state.ctx) {
+    state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+    state.hasDrawn = false;
+  }
 }
+
+function checkSignatureDrawn(canvasId) {
+  return signatureContexts[canvasId] ? signatureContexts[canvasId].hasDrawn : false;
+}
+
+// Inicializar ambos canvas cuando cargue el script
+initSignatureCanvas('firma-aplicante', 'btn-limpiar-firma-aplicante');
+initSignatureCanvas('firma-co-aplicante', 'btn-limpiar-firma-co-aplicante');
