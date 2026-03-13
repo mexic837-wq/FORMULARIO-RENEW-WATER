@@ -514,12 +514,45 @@ input[type="date"] { cursor: pointer; }
 
 .btn-submit:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(14,127,171,0.4); }
 .btn-submit:active { transform: translateY(0); }
-.btn-submit.loading { pointer-events: none; opacity: 0.75; }
+.btn-submit.loading { pointer-events: none; opacity: 0.85; filter: grayscale(50%); }
 
-.btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
+.btn-submit span, .btn-submit svg, .btn-submit .spinner { position: relative; z-index: 1; display:flex; align-items:center; justify-content:center; }
+.btn-submit.loading .btn-icon { display: none; }
+.btn-submit.loading .spinner { display: block; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin-right: 8px; }
+.spinner.disable-anim { display: none; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* ════════════════════════════════════════════════════════════
-   16. TOAST NOTIFICATION
+   16. CSS PROGRESS BAR (Sticky)
+════════════════════════════════════════════════════════════ */
+.global-progress-container {
+  width: 100%;
+  height: 6px;
+  background-color: var(--border-light);
+  border-radius: 4px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  position: sticky;
+  top: 75px; /* Just below header */
+  z-index: 80;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.global-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  width: 0%; /* Default 0 */
+  transition: width 0.3s ease-out;
+}
+
+/* Canvas Styling */
+.signature-wrapper { position: relative; width: 300px; margin: 0 auto; }
+.signature-wrapper canvas { border: 1px dashed var(--border-light) !important; background-color: var(--bg-input) !important; }
+.signature-placeholder { position: absolute; pointer-events: none; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted); font-size: 1.2rem; font-family: 'Outfit', sans-serif; font-weight: 500; user-select: none; opacity: 0.5; }
+
+/* ════════════════════════════════════════════════════════════
+   17. TOAST NOTIFICATION
 ════════════════════════════════════════════════════════════ */
 #toast {
   position: fixed;

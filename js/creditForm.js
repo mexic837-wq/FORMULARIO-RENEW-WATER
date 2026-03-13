@@ -98,8 +98,8 @@ function collectCreditFormData(formEl) {
   }
 
   // Metadatos
-  data._tipo       = 'aplicacion_credito';
-  data._timestamp  = new Date().toISOString();
+  data.tipo_formulario = 'aplicacion_credito';
+  data._timestamp      = new Date().toISOString();
 
   return data;
 }
@@ -157,7 +157,7 @@ async function handleCreditFormSubmit(e) {
 
   const form = e.target;
   const btn  = form.querySelector('.btn-submit');
-  const span = btn.querySelector('span');
+  const span = btn.querySelector('.btn-text') || btn.querySelector('span');
   const originalLabel = span.textContent;
 
   // Validación
@@ -169,7 +169,8 @@ async function handleCreditFormSubmit(e) {
 
   // Estado de carga
   btn.classList.add('loading');
-  span.textContent = 'Enviando…';
+  btn.disabled = true;
+  span.textContent = 'Procesando...';
   showToast('Procesando Aplicación de Crédito… 📡', 'success', 10000);
 
   const payload = collectCreditFormData(form);
@@ -192,6 +193,7 @@ async function handleCreditFormSubmit(e) {
     showToast(`Error al enviar. (${err.message})`, 'error');
   } finally {
     btn.classList.remove('loading');
+    btn.disabled = false;
     span.textContent = originalLabel;
   }
 }
@@ -261,6 +263,12 @@ function initSignatureCanvas(canvasId, clearBtnId) {
     e.preventDefault();
     signatureContexts[canvasId].isDrawing = true;
     signatureContexts[canvasId].hasDrawn = true;
+    
+    // Ocultar placeholder
+    const placeholderId = 'placeholder-' + canvasId.replace('firma-', '');
+    const placeholder = document.getElementById(placeholderId);
+    if (placeholder) placeholder.style.opacity = '0';
+
     const pos = getPos(e);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
@@ -301,6 +309,11 @@ function clearSignature(canvasId) {
   if (state && state.ctx) {
     state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
     state.hasDrawn = false;
+
+    // Mostrar placeholder
+    const placeholderId = 'placeholder-' + canvasId.replace('firma-', '');
+    const placeholder = document.getElementById(placeholderId);
+    if (placeholder) placeholder.style.opacity = '0.5';
   }
 }
 
@@ -311,3 +324,71 @@ function checkSignatureDrawn(canvasId) {
 // Inicializar ambos canvas cuando cargue el script
 initSignatureCanvas('firma-aplicante', 'btn-limpiar-firma-aplicante');
 initSignatureCanvas('firma-co-aplicante', 'btn-limpiar-firma-co-aplicante');
+
+/* ════════════════════════════════════════════════════════════
+   MASKS & UI ENHANCEMENTS
+════════════════════════════════════════════════════════════ */
+
+function initMasks() {
+  const phoneInputs = ['ca_phone', 'cb_phone', 'ca_work_phone', 'cb_work_phone'];
+  phoneInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', formatPhone);
+  });
+
+  const ssnInputs = ['ca_ssn', 'cb_ssn'];
+  ssnInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', formatSSN);
+  });
+}
+
+function formatPhone(e) {
+  let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+  e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+  updateProgressBar();
+}
+
+function formatSSN(e) {
+  let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,4})/);
+  e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
+  updateProgressBar();
+}
+
+/* ════════════════════════════════════════════════════════════
+   PROGRESS BAR LOGIC
+════════════════════════════════════════════════════════════ */
+
+function updateProgressBar() {
+  const formEl = document.getElementById('form-credit');
+  if (!formEl) return;
+  const requiredFields = Array.from(formEl.querySelectorAll('[required]'));
+  if (requiredFields.length === 0) return;
+  
+  const filledFields = requiredFields.filter(field => {
+    // Si es radio o checkbox requerido (menos común, pero por precaución)
+    if (field.type === 'radio' || field.type === 'checkbox') {
+      const groupName = field.name;
+      return formEl.querySelector(`input[name="${groupName}"]:checked`) !== null;
+    }
+    return field.value.trim() !== '';
+  });
+
+  const percentage = (filledFields.length / requiredFields.length) * 100;
+  const bar = document.getElementById('credit-progress-bar');
+  if (bar) bar.style.width = percentage + '%';
+}
+
+function initProgressBar() {
+  const formEl = document.getElementById('form-credit');
+  if (!formEl) return;
+  formEl.addEventListener('input', updateProgressBar);
+  formEl.addEventListener('change', updateProgressBar);
+  updateProgressBar(); // Init on load
+}
+
+// Inicializar de inmediato (asumiendo defer, o documento cargado)
+document.addEventListener('DOMContentLoaded', () => {
+  initMasks();
+  initProgressBar();
+});
