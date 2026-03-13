@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     // 2. Descargar el molde desde la misma web pública
     const protocolo = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
-    const urlMolde = `${protocol}://${host}/molde_credito.pdf`;
+    const urlMolde = `${protocolo}://${host}/molde_credito.pdf`;
     
     const fetchResponse = await fetch(urlMolde);
     if (!fetchResponse.ok) {
