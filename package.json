@@ -1,0 +1,15 @@
+{
+  "name": "aplicacion-formulario-web",
+  "version": "1.0.0",
+  "description": "Formulario web RENEW WATER con generación de PDFs serverless",
+  "main": "index.js",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
