@@ -81,7 +81,7 @@
 
             <div class="field-group">
               <label for="ca_amount">Monto (Amount) <span class="required">*</span></label>
-              <input type="number" id="ca_amount" name="amount" placeholder="$ 0.00" min="0" step="0.01" required />
+              <input type="text" id="ca_amount" name="amount" class="currency-mask" placeholder="$ 0.00" required />
             </div>
 
             <div class="field-group span-2">
@@ -150,7 +150,7 @@
 
             <div class="field-group">
               <label for="ca_mortgage_payment">Hipoteca / Renta Mensual</label>
-              <input type="number" id="ca_mortgage_payment" name="mortgagePayment" placeholder="$ 0.00" min="0" step="0.01" />
+              <input type="text" id="ca_mortgage_payment" name="mortgagePayment" class="currency-mask" placeholder="$ 0.00" />
             </div>
 
             <!-- Tipo de vivienda -->
@@ -193,7 +193,7 @@
 
             <div class="field-group">
               <label for="cb_amount">Monto (Amount)</label>
-              <input type="number" id="cb_amount" name="co_amount" placeholder="$ 0.00" min="0" step="0.01" />
+              <input type="text" id="cb_amount" name="co_amount" class="currency-mask" placeholder="$ 0.00" />
             </div>
 
             <div class="field-group span-2">
@@ -259,7 +259,7 @@
 
             <div class="field-group">
               <label for="cb_mortgage_payment">Hipoteca / Renta Mensual</label>
-              <input type="number" id="cb_mortgage_payment" name="co_mortgagePayment" placeholder="$ 0.00" min="0" step="0.01" />
+              <input type="text" id="cb_mortgage_payment" name="co_mortgagePayment" class="currency-mask" placeholder="$ 0.00" />
             </div>
 
             <div class="field-group span-full">
@@ -337,13 +337,16 @@
             </div>
 
             <div class="field-group">
-              <label for="ca_monthly_income">Pago Mensual (Monthly Income)</label>
-              <input type="number" id="ca_monthly_income" name="monthlyIncome" placeholder="$ 0.00" min="0" step="0.01" />
+              <label for="ca_monthly_income">Ingresos Totales (Income)</label>
+              <input type="text" id="ca_monthly_income" name="monthlyIncome" class="currency-mask" placeholder="$ 0.00" />
             </div>
 
             <div class="field-group">
-              <label for="ca_yearly_income">Pago Anual (Yearly Income)</label>
-              <input type="number" id="ca_yearly_income" name="yearlyIncome" placeholder="$ 0.00" min="0" step="0.01" />
+              <label>Frecuencia de Pago (Frequency)</label>
+              <div class="pill-group" style="margin-top:0;">
+                <input type="radio" name="ca_incomeFreq" id="ca_if_monthly" value="Mensual"> <label for="ca_if_monthly">📅 Mensual</label>
+                <input type="radio" name="ca_incomeFreq" id="ca_if_yearly"  value="Anual">   <label for="ca_if_yearly">📆 Anual</label>
+              </div>
             </div>
 
             <!-- Co-Aplicante -->
@@ -386,18 +389,40 @@
             </div>
 
             <div class="field-group">
-              <label for="cb_monthly_income">Pago Mensual</label>
-              <input type="number" id="cb_monthly_income" name="co_monthlyIncome" placeholder="$ 0.00" min="0" step="0.01" />
+              <label for="cb_monthly_income">Ingresos Totales (Income)</label>
+              <input type="text" id="cb_monthly_income" name="co_monthlyIncome" class="currency-mask" placeholder="$ 0.00" />
             </div>
 
             <div class="field-group">
-              <label for="cb_yearly_income">Pago Anual</label>
-              <input type="number" id="cb_yearly_income" name="co_yearlyIncome" placeholder="$ 0.00" min="0" step="0.01" />
+              <label>Frecuencia de Pago (Frequency)</label>
+              <div class="pill-group" style="margin-top:0;">
+                <input type="radio" name="cb_incomeFreq" id="cb_if_monthly" value="Mensual"> <label for="cb_if_monthly">📅 Mensual</label>
+                <input type="radio" name="cb_incomeFreq" id="cb_if_yearly"  value="Anual">   <label for="cb_if_yearly">📆 Anual</label>
+              </div>
             </div>
 
           </div>
         </div>
       </div><!-- /Sección C -->
+
+      <!-- ── SECCIÓN D: Representante de Ventas ── -->
+      <div class="form-section">
+        <div class="section-header navy-grad">
+          <div class="section-icon">🤝</div>
+          <div>
+            <h2>Representante de Ventas</h2>
+            <p>Información del vendedor o agencia</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="field-grid">
+            <div class="field-group span-full">
+              <label for="rep_name">Nombre del Representante (Dealer) <span class="required">*</span></label>
+              <input type="text" id="rep_name" name="dealerName" placeholder="Ej. Carlos Martínez" required />
+            </div>
+          </div>
+        </div>
+      </div><!-- /Dealer -->
 
       <!-- ── SECCIÓN D: Firma ── -->
       <div class="form-section">

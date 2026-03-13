@@ -66,8 +66,8 @@ function collectCreditFormData(formEl) {
     direccionTrabajo: _val('ca_work_address'),
     posicion:         _val('ca_position'),
     tiempoTrabajo:    _val('ca_time_job'),
-    pagoMensual:      _val('ca_monthly_income'),
-    pagoAnual:        _val('ca_yearly_income'),
+    ingresos:         _val('ca_monthly_income'),
+    frecuenciaPago:   _radio(formEl, 'ca_incomeFreq'),
   };
 
   // ── Sección C: Empleo e Ingresos — Co-Aplicante ──
@@ -78,8 +78,8 @@ function collectCreditFormData(formEl) {
     direccionTrabajo: _val('cb_work_address'),
     posicion:         _val('cb_position'),
     tiempoTrabajo:    _val('cb_time_job'),
-    pagoMensual:      _val('cb_monthly_income'),
-    pagoAnual:        _val('cb_yearly_income'),
+    ingresos:         _val('cb_monthly_income'),
+    frecuenciaPago:   _radio(formEl, 'cb_incomeFreq'),
   };
 
   // ── Firma Digital ──
@@ -96,6 +96,9 @@ function collectCreditFormData(formEl) {
   } else {
     data.firma_co_aplicante = ""; 
   }
+
+  // ── Representante de Ventas ──
+  data.nombre_dealer = _val('rep_name');
 
   // Metadatos
   data.tipo_formulario = 'aplicacion_credito';
@@ -341,6 +344,27 @@ function initMasks() {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', formatSSN);
   });
+
+  document.querySelectorAll('.currency-mask').forEach(input => {
+    input.addEventListener('input', formatCurrency);
+    // Disparar evento para formato inicial si tienen valor
+    if(input.value) input.dispatchEvent(new Event('input'));
+  });
+}
+
+function formatCurrency(e) {
+  let value = e.target.value.replace(/[^0-9]/g, '');
+  if (value === '') {
+    e.target.value = '';
+    return;
+  }
+  let numberVal = parseInt(value, 10) / 100;
+  e.target.value = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+  }).format(numberVal);
+  updateProgressBar();
 }
 
 function formatPhone(e) {
