@@ -55,16 +55,17 @@ function collectWorkOrderData(formEl) {
   };
 
   // ── Sección D: Finanzas y Pago ──
-  data.pagos = {
+  data.finanzas = {
     precioContado:       _woVal('wo_cash_price'),
     instalacion:         _woVal('wo_installation'),
+    totalContado:        _woVal('wo_total_cash_price'),
     cuotaInicial:        _woVal('wo_down_payment'),
     saldo_financiado:    _woVal('wo_balance_financed'),
     cantidad_financiar:  _woVal('wo_amount_financed'),
     terminos_pago:       _woVal('wo_terms'),
     apr:                 _woVal('wo_apr'),
-    cargos_financieros:  _woVal('wo_finance_charge'),
-    total_pagos:         _woVal('wo_total_payments'),
+    cargosFinancieros:   _woVal('wo_finance_charge'),
+    totalPagos:          _woVal('wo_total_payments'),
   };
 
   data.tarjeta = {
