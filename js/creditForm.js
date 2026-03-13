@@ -82,6 +82,15 @@ function collectCreditFormData(formEl) {
     pagoAnual:        _val('cb_yearly_income'),
   };
 
+  // ── Firma Digital ──
+  const canvas = document.getElementById('firma-aplicante');
+  if (canvas && isCanvasDrawn(canvas)) {
+    // Si se dibujó algo en el canvas, obtenemos la imagen en base64
+    data.firma_aplicante = canvas.toDataURL('image/png');
+  } else {
+    data.firma_aplicante = ""; // Canvas en blanco
+  }
+
   // Metadatos
   data._tipo       = 'aplicacion_credito';
   data._timestamp  = new Date().toISOString();
@@ -116,7 +125,7 @@ function validateCreditForm(formEl) {
 ════════════════════════════════════════════════════════════ */
 
 /**
- * Limpia completamente el formulario de crédito.
+ * Limpia completamente el formulario de crédito y el canvas de firma.
  * @param {HTMLFormElement} formEl
  */
 function resetCreditForm(formEl) {
@@ -124,6 +133,7 @@ function resetCreditForm(formEl) {
   formEl.querySelectorAll('input[type="radio"], input[type="checkbox"]')
         .forEach(el => { el.checked = false; });
   formEl.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+  clearSignature();
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -193,4 +203,86 @@ function _val(id) {
 function _radio(formEl, name) {
   const checked = formEl.querySelector(`input[name="${name}"]:checked`);
   return checked ? checked.value : '';
+}
+
+/* ════════════════════════════════════════════════════════════
+   CANVAS SIGNATURE LOGIC
+════════════════════════════════════════════════════════════ */
+
+let signaturePad = null;
+let isDrawing = false;
+let hasDrawn = false; // Flag to easily check if canvas is not blank
+
+const canvasEl = document.getElementById('firma-aplicante');
+const ctx = canvasEl ? canvasEl.getContext('2d') : null;
+
+if (canvasEl && ctx) {
+  // Configuración de la línea
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#000000';
+
+  // Helper para obtener posición exacta considerando bordes y scroll
+  const getPos = (e) => {
+    const rect = canvasEl.getBoundingClientRect();
+    const isTouch = e.touches && e.touches.length > 0;
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+    
+    // Calcular escala css vs tamaño interno del canvas
+    const scaleX = canvasEl.width / rect.width;
+    const scaleY = canvasEl.height / rect.height;
+
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  };
+
+  const startPosition = (e) => {
+    e.preventDefault();
+    isDrawing = true;
+    hasDrawn = true;
+    const pos = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  };
+
+  const draw = (e) => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  };
+
+  const finishedPosition = () => {
+    isDrawing = false;
+    ctx.closePath();
+  };
+
+  // Eventos Mouse
+  canvasEl.addEventListener('mousedown', startPosition);
+  canvasEl.addEventListener('mousemove', draw);
+  canvasEl.addEventListener('mouseup', finishedPosition);
+  canvasEl.addEventListener('mouseleave', finishedPosition);
+
+  // Eventos Touch (Móvil)
+  canvasEl.addEventListener('touchstart', startPosition, { passive: false });
+  canvasEl.addEventListener('touchmove', draw, { passive: false });
+  canvasEl.addEventListener('touchend', finishedPosition);
+}
+
+document.getElementById('btn-limpiar-firma')?.addEventListener('click', clearSignature);
+
+function clearSignature() {
+  if (canvasEl && ctx) {
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    hasDrawn = false;
+  }
+}
+
+function isCanvasDrawn(canvas) {
+  return hasDrawn;
 }

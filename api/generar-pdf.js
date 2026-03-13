@@ -27,15 +27,49 @@ export default async function handler(req, res) {
     const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
     const form = pdfDoc.getForm();
 
-    // 3. Llenar los campos dinámicamente
+    // 3. Llenar los campos dinámicamente o estampar imágenes
     for (const [key, value] of Object.entries(datos)) {
       try {
         const field = form.getTextField(key.trim());
-        if (field) {
+        if (!field) continue;
+
+        if (typeof value === 'string' && value.startsWith('data:image/png;base64,')) {
+          // Es una firma digital
+          const base64Data = value.split(',')[1];
+          const imageBytes = Buffer.from(base64Data, 'base64');
+          const pngImage = await pdfDoc.embedPng(imageBytes);
+          
+          // Obtener las coordenadas del campo de texto
+          const widgets = field.acroField.getWidgets();
+          const widget = widgets[0];
+          const rect = widget.getRectangle();
+          
+          // Buscar en qué página está este campo
+          const pages = pdfDoc.getPages();
+          let pageOfField = pages[0]; // Por defecto la página 1
+          for (const p of pages) {
+            if (p.ref === widget.P()) {
+              pageOfField = p;
+              break;
+            }
+          }
+          
+          // Dibujar la firma ajustada al tamaño del cuadro
+          pageOfField.drawImage(pngImage, {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+          });
+          
+          // Borrar el texto del campo para que no estorbe
+          field.setText('');
+        } else {
+          // Es un texto normal
           field.setText(value ? String(value) : '');
         }
       } catch (err) {
-        console.log(`Campo omitido: ${key}`);
+        console.log(`Campo omitido o no es un text field: ${key}`);
       }
     }
 

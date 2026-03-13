@@ -394,8 +394,23 @@
         </div>
       </div><!-- /Sección C -->
 
+      <!-- ── SECCIÓN D: Firma ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">✍️</div>
+          <div>
+            <h2>Firma del Aplicante</h2>
+            <p>Por favor firme dentro del recuadro</p>
+          </div>
+        </div>
+        <div class="section-body text-center" style="text-align: center;">
+          <canvas id="firma-aplicante" width="300" height="150" class="border border-gray-300 rounded bg-white touch-none mx-auto block" style="border: 1px solid #ccc; border-radius: 8px; background: #fff; margin: 0 auto; display: block; touch-action: none;"></canvas>
+          <button type="button" id="btn-limpiar-firma" class="btn-secondary" style="margin-top: 10px; padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; background: #f0f0f0; cursor: pointer;">Limpiar Firma</button>
+        </div>
+      </div>
+
       <div class="submit-zone">
-        <p>Al enviar confirma que toda la información proporcionada es verídica.</p>
+        <p>Al enviar confirma que toda la información y la firma proporcionada es verídica.</p>
         <button type="submit" class="btn-submit">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/>
