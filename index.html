@@ -742,6 +742,47 @@
         </div>
       </div><!-- /Sección D WO -->
 
+      <!-- ── SECCIÓN E: Representante de Ventas ── -->
+      <div class="form-section">
+        <div class="section-header navy-grad">
+          <div class="section-icon">🤝</div>
+          <div>
+            <h2>Representante de Ventas</h2>
+            <p>Información del vendedor o agencia</p>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="field-grid">
+            <div class="field-group span-full">
+              <label for="wo_rep_name">Nombre del Representante (Dealer) <span class="required">*</span></label>
+              <input type="text" id="wo_rep_name" name="wo_dealerName" placeholder="Ej. Carlos Martínez" required />
+            </div>
+          </div>
+        </div>
+      </div><!-- /Dealer WO -->
+
+      <!-- ── SECCIÓN F: Firma ── -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">✍️</div>
+          <div>
+            <h2>Firma del Representante</h2>
+            <p>Por favor firme dentro del recuadro</p>
+          </div>
+        </div>
+        <div class="section-body text-center" style="display: flex; flex-direction: column; gap: 2rem; align-items: center; text-align: center;">
+          <!-- Firma Representante -->
+          <div>
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #333;">Firma del Representante (Dealer) <span class="required">*</span></h3>
+            <div class="signature-wrapper">
+              <span class="signature-placeholder" id="placeholder-wo-firma-rep">Firme aquí</span>
+              <canvas id="wo-firma-rep" width="300" height="150" class="border border-gray-300 rounded bg-white touch-none mx-auto block" style="border: 1px solid #ccc; border-radius: 8px; background: #fff; margin: 0 auto; display: block; touch-action: none;"></canvas>
+            </div>
+            <button type="button" id="btn-limpiar-wo-firma-rep" class="btn-secondary" style="margin-top: 10px; padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; background: #f0f0f0; cursor: pointer;">Limpiar Firma</button>
+          </div>
+        </div>
+      </div>
+
       <div class="submit-zone">
         <p>Al enviar, se generará la Orden de Trabajo y se procesará en el sistema.</p>
         <button type="submit" class="btn-submit">

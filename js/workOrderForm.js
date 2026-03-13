@@ -73,6 +73,16 @@ function collectWorkOrderData(formEl) {
     cvv:          _woVal('wo_cc_cvv'),
   };
 
+  // ── Representante de Ventas y Firmas ──
+  data.nombre_dealer = _woVal('wo_rep_name');
+  data.firmas = {};
+  const canvasRep = document.getElementById('wo-firma-rep');
+  if (canvasRep && checkSignatureDrawn('wo-firma-rep')) {
+    data.firmas.representante = canvasRep.toDataURL('image/png');
+  } else {
+    data.firmas.representante = "";
+  }
+
   // Metadatos
   data._tipo      = 'orden_trabajo';
   data._timestamp = new Date().toISOString();
@@ -117,6 +127,11 @@ function resetWorkOrderForm(formEl) {
         .forEach(w => w.classList.remove('visible'));
   formEl.querySelectorAll('.error')
         .forEach(el => el.classList.remove('error'));
+
+  // Limpiar firmas
+  if (typeof clearSignature === 'function') {
+    clearSignature('wo-firma-rep');
+  }
 
   // Re-establecer fecha de hoy
   const woDate = document.getElementById('wo_date');
@@ -196,4 +211,13 @@ function _woChecked(id) {
 function _woRadio(formEl, name) {
   const checked = formEl.querySelector(`input[name="${name}"]:checked`);
   return checked ? checked.value : '';
+}
+
+// Inicializar canvas de firma de Work Order si existe la función global
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof initSignatureCanvas === 'function') {
+      initSignatureCanvas('wo-firma-rep', 'btn-limpiar-wo-firma-rep');
+    }
+  });
 }
