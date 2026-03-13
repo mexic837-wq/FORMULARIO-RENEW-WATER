@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     // ----------------------------------------------------------------
     // 3. Cargar el PDF molde desde la carpeta local (api/assets)
     // ----------------------------------------------------------------
-    const pdfPath = path.join(__dirname, "assets", "molde_credito.pdf");
+    const pdfPath = path.join(process.cwd(), "api", "assets", "molde_credito.pdf");
 
     if (!fs.existsSync(pdfPath)) {
       throw new Error(`No se encontró el archivo molde en: ${pdfPath}`);
@@ -114,10 +114,11 @@ export default async function handler(req, res) {
     // ----------------------------------------------------------------
     // 10. Manejo de errores inesperados
     // ----------------------------------------------------------------
-    console.error("[generar-pdf] Error inesperado:", error);
-    return res.status(500).json({
-      error: "Error interno al generar el PDF.",
+    console.error('Error generando PDF:', error);
+    return res.status(500).json({ 
+      error: 'Error interno del servidor', 
       detalle: error.message,
+      ruta_intentada: path.join(process.cwd(), 'api', 'assets', 'molde_credito.pdf')
     });
   }
 }
