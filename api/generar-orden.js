@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     // 2. Descargar el molde público
     const protocolo = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
-    const urlMolde = `${protocolo}://${host}/molde_orden.pdf`;
+    const urlMolde = `${protocolo}://${host}/molde_orden_v1.pdf`;
     
     const fetchResponse = await fetch(urlMolde);
     if (!fetchResponse.ok) {
