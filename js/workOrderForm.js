@@ -29,6 +29,7 @@ function collectWorkOrderData(formEl) {
     ciudad:    _woVal('wo_city'),
     estado:    _woVal('wo_state'),
     zipCode:   _woVal('wo_zip'),
+    segundoNombre: _woVal('wo_second_purchaser'),
   };
 
   // ── Sección B: Equipos a Instalar ──
@@ -77,12 +78,18 @@ function collectWorkOrderData(formEl) {
   // ── Representante de Ventas y Firmas ──
   data.nombre_dealer = _woVal('wo_rep_name');
   data.firmas = {};
+  
   const canvasRep = document.getElementById('wo-firma-rep');
-  if (canvasRep && checkSignatureDrawn('wo-firma-rep')) {
-    data.firmas.representante = canvasRep.toDataURL('image/png');
-  } else {
-    data.firmas.representante = "";
-  }
+  data.firmas.representante = (canvasRep && checkSignatureDrawn('wo-firma-rep')) 
+    ? canvasRep.toDataURL('image/png') : "";
+
+  const canvasComprador = document.getElementById('wo-firma-comprador');
+  data.firmas.comprador = (canvasComprador && checkSignatureDrawn('wo-firma-comprador')) 
+    ? canvasComprador.toDataURL('image/png') : "";
+
+  const canvasComprador2 = document.getElementById('wo-firma-comprador-2');
+  data.firmas.comprador_2 = (canvasComprador2 && checkSignatureDrawn('wo-firma-comprador-2')) 
+    ? canvasComprador2.toDataURL('image/png') : "";
 
   // Metadatos
   data._tipo      = 'orden_trabajo';
@@ -132,6 +139,8 @@ function resetWorkOrderForm(formEl) {
   // Limpiar firmas
   if (typeof clearSignature === 'function') {
     clearSignature('wo-firma-rep');
+    clearSignature('wo-firma-comprador');
+    clearSignature('wo-firma-comprador-2');
   }
 
   // Re-establecer fecha de hoy
@@ -219,6 +228,8 @@ if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof initSignatureCanvas === 'function') {
       initSignatureCanvas('wo-firma-rep', 'btn-limpiar-wo-firma-rep');
+      initSignatureCanvas('wo-firma-comprador', 'btn-limpiar-wo-firma-comprador');
+      initSignatureCanvas('wo-firma-comprador-2', 'btn-limpiar-wo-firma-comprador-2');
     }
   });
 }

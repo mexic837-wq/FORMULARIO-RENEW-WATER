@@ -510,6 +510,11 @@
               <input type="text" id="wo_purchaser" name="purchaser" placeholder="Nombre completo del comprador" required />
             </div>
 
+            <div class="field-group span-2">
+              <label for="wo_second_purchaser">Segundo Comprador (Co-titular) <span class="optional-badge">Opcional</span></label>
+              <input type="text" id="wo_second_purchaser" name="secondPurchaser" placeholder="Nombre del segundo comprador (si aplica)" />
+            </div>
+
             <div class="field-group">
               <label for="wo_phone">Teléfono (Phone)</label>
               <input type="tel" id="wo_phone" name="buyerPhone" placeholder="(555) 000-0000" />
@@ -766,16 +771,37 @@
         </div>
       </div><!-- /Dealer WO -->
 
-      <!-- ── SECCIÓN F: Firma ── -->
+      <!-- ── SECCIÓN F: Firmas ── -->
       <div class="form-section">
         <div class="section-header">
           <div class="section-icon">✍️</div>
           <div>
-            <h2>Firma del Representante</h2>
-            <p>Por favor firme dentro del recuadro</p>
+            <h2>Firmas del Contrato</h2>
+            <p>Por favor firme dentro de los recuadros correspondientes</p>
           </div>
         </div>
         <div class="section-body text-center" style="display: flex; flex-direction: column; gap: 2rem; align-items: center; text-align: center;">
+          
+          <!-- Firma Comprador -->
+          <div>
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #333;">Firma del Comprador <span class="required">*</span></h3>
+            <div class="signature-wrapper">
+              <span class="signature-placeholder" id="placeholder-wo-firma-comprador">Firme aquí</span>
+              <canvas id="wo-firma-comprador" width="300" height="150" class="border border-gray-300 rounded bg-white touch-none mx-auto block" style="border: 1px solid #ccc; border-radius: 8px; background: #fff; margin: 0 auto; display: block; touch-action: none;"></canvas>
+            </div>
+            <button type="button" id="btn-limpiar-wo-firma-comprador" class="btn-secondary" style="margin-top: 10px; padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; background: #f0f0f0; cursor: pointer;">Limpiar Firma</button>
+          </div>
+
+          <!-- Firma Segundo Comprador -->
+          <div>
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #333;">Firma del Segundo Comprador <span class="optional-badge">Opcional</span></h3>
+            <div class="signature-wrapper">
+              <span class="signature-placeholder" id="placeholder-wo-firma-comprador-2">Firme aquí</span>
+              <canvas id="wo-firma-comprador-2" width="300" height="150" class="border border-gray-300 rounded bg-white touch-none mx-auto block" style="border: 1px solid #ccc; border-radius: 8px; background: #fff; margin: 0 auto; display: block; touch-action: none;"></canvas>
+            </div>
+            <button type="button" id="btn-limpiar-wo-firma-comprador-2" class="btn-secondary" style="margin-top: 10px; padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; background: #f0f0f0; cursor: pointer;">Limpiar Firma</button>
+          </div>
+
           <!-- Firma Representante -->
           <div>
             <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #333;">Firma del Representante (Dealer) <span class="required">*</span></h3>
