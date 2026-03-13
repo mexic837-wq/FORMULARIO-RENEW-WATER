@@ -16,6 +16,12 @@
 // =============================================================================
 
 import { PDFDocument } from "pdf-lib";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Handler principal de la Serverless Function de Vercel.
@@ -35,13 +41,7 @@ export default async function handler(req, res) {
   // ------------------------------------------------------------------
   // 2. Extraer y validar el cuerpo del request
   // ------------------------------------------------------------------
-  const { moldeUrl, datos } = req.body ?? {};
-
-  if (!moldeUrl || typeof moldeUrl !== "string") {
-    return res
-      .status(400)
-      .json({ error: "Se requiere 'moldeUrl' (string) en el body." });
-  }
+  const { datos } = req.body ?? {};
 
   if (!datos || typeof datos !== "object" || Array.isArray(datos)) {
     return res
@@ -51,17 +51,15 @@ export default async function handler(req, res) {
 
   try {
     // ----------------------------------------------------------------
-    // 3. Descargar el PDF molde desde la URL proporcionada
+    // 3. Cargar el PDF molde desde la carpeta local (api/assets)
     // ----------------------------------------------------------------
-    const response = await fetch(moldeUrl);
+    const pdfPath = path.join(__dirname, "assets", "molde_credito.pdf");
 
-    if (!response.ok) {
-      return res.status(422).json({
-        error: `No se pudo obtener el PDF molde. HTTP ${response.status}: ${response.statusText}`,
-      });
+    if (!fs.existsSync(pdfPath)) {
+      throw new Error(`No se encontró el archivo molde en: ${pdfPath}`);
     }
 
-    const moldeBytes = await response.arrayBuffer();
+    const moldeBytes = fs.readFileSync(pdfPath);
 
     // ----------------------------------------------------------------
     // 4. Cargar el PDF con pdf-lib
