@@ -67,12 +67,10 @@ function collectWorkOrderData(formEl) {
     apr:                 _woVal('wo_apr'),
     cargosFinancieros:   _woVal('wo_finance_charge'),
     totalPagos:          _woVal('wo_total_payments'),
-  };
-
-  data.tarjeta = {
-    numero:       _woVal('wo_cc_number'),
-    expiracion:   _woVal('wo_cc_exp'),
-    cvv:          _woVal('wo_cc_cvv'),
+    tarjetaMonto:        _woVal('wo_cc_amount'),
+    tarjetaNumero:       _woVal('wo_cc_number'),
+    tarjetaExpiracion:   _woVal('wo_cc_exp'),
+    tarjetaCvv:          _woVal('wo_cc_cvv'),
   };
 
   // ── Representante de Ventas y Firmas ──
