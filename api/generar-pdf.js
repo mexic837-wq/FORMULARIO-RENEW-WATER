@@ -1,15 +1,19 @@
 import { PDFDocument } from 'pdf-lib';
 
 export default async function handler(req, res) {
-  // 1. Solo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Use POST' });
   }
 
   try {
-    const datos = req.body.datos || req.body;
+    // 1. Asegurar parseo del JSON
+    let bodyData = req.body;
+    if (typeof bodyData === 'string') {
+      bodyData = JSON.parse(bodyData);
+    }
+    const datos = bodyData.datos || bodyData;
 
-    // 2. Descargar el molde desde la misma web pública
+    // 2. Descargar el molde público
     const protocolo = req.headers['x-forwarded-proto'] || 'https';
     const host = req.headers.host;
     const urlMolde = `${protocolo}://${host}/molde_credito.pdf`;
@@ -19,15 +23,14 @@ export default async function handler(req, res) {
       throw new Error(`No se pudo descargar el molde desde ${urlMolde}`);
     }
 
-    // 3. Convertir a ArrayBuffer y cargar en pdf-lib
     const pdfArrayBuffer = await fetchResponse.arrayBuffer();
     const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
     const form = pdfDoc.getForm();
 
-    // 4. Llenar los campos dinámicamente
+    // 3. Llenar los campos dinámicamente
     for (const [key, value] of Object.entries(datos)) {
       try {
-        const field = form.getTextField(key);
+        const field = form.getTextField(key.trim());
         if (field) {
           field.setText(value ? String(value) : '');
         }
@@ -36,11 +39,10 @@ export default async function handler(req, res) {
       }
     }
 
-    // 5. Aplanar y guardar
+    // 4. Aplanar y guardar
     form.flatten();
     const pdfBytes = await pdfDoc.save();
 
-    // 6. Devolver el archivo
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="contrato_generado.pdf"');
     return res.status(200).send(Buffer.from(pdfBytes));
