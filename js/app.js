@@ -101,6 +101,24 @@ function toggleScheduleOther(radio) {
   });
 }
 
+/** Muestra/oculta el input de texto "Otro piso" */
+function toggleFloorOther(radio) {
+  const wrapper   = document.getElementById('floor_other_wrapper');
+  const textInput = document.getElementById('wo_floor_other_text');
+  const isOther   = radio.value === 'Otro' && radio.checked;
+
+  wrapper.classList.toggle('visible', isOther);
+
+  document.querySelectorAll('input[name="wo_floor"]').forEach(r => {
+    if (r !== radio) {
+      r.addEventListener('change', () => {
+        wrapper.classList.remove('visible');
+        textInput.value = '';
+      }, { once: true });
+    }
+  });
+}
+
 /* ════════════════════════════════════════════════════════════
    AUTO-FORMAT HELPERS
 ════════════════════════════════════════════════════════════ */

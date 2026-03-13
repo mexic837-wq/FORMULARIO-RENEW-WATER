@@ -38,7 +38,7 @@ function collectWorkOrderData(formEl) {
     aguaAlcalina:    _woChecked('eq_alkaline'),
     aguaPozo:        _woChecked('eq_well'),
     otro:            _woChecked('eq_other'),
-    otroDescripcion: _woVal('eq_other_text'),
+    otro_texto:      _woVal('eq_other_text'),
   };
 
   // ── Sección C: Instrucciones de Instalación ──
@@ -46,6 +46,7 @@ function collectWorkOrderData(formEl) {
     fechaEstimada:        _woVal('wo_install_date'),
     personasEnCasa:       _woVal('wo_people'),
     tipoPiso:             _woRadio(formEl, 'wo_floor'),
+    piso_otro_texto:      _woVal('wo_floor_other_text'),
     conexionRefrigerador: _woRadio(formEl, 'wo_icemaker'),
     horario:              _woRadio(formEl, 'wo_schedule'),
     horarioOtro:          _woVal('wo_schedule_other_text'),
@@ -54,17 +55,22 @@ function collectWorkOrderData(formEl) {
   };
 
   // ── Sección D: Finanzas y Pago ──
-  data.finanzas = {
+  data.pagos = {
     precioContado:       _woVal('wo_cash_price'),
     instalacion:         _woVal('wo_installation'),
     cuotaInicial:        _woVal('wo_down_payment'),
-    cantidadFinanciar:   _woVal('wo_amount_financed'),
-    terminosPago:        _woVal('wo_terms'),
+    saldo_financiado:    _woVal('wo_balance_financed'),
+    cantidad_financiar:  _woVal('wo_amount_financed'),
+    terminos_pago:       _woVal('wo_terms'),
     apr:                 _woVal('wo_apr'),
-    // Datos de tarjeta — se envían encriptados en producción
-    tarjetaNumero:       _woVal('wo_cc_number'),
-    tarjetaExpiracion:   _woVal('wo_cc_exp'),
-    tarjetaCVV:          _woVal('wo_cc_cvv'),
+    cargos_financieros:  _woVal('wo_finance_charge'),
+    total_pagos:         _woVal('wo_total_payments'),
+  };
+
+  data.tarjeta = {
+    numero:       _woVal('wo_cc_number'),
+    expiracion:   _woVal('wo_cc_exp'),
+    cvv:          _woVal('wo_cc_cvv'),
   };
 
   // Metadatos
