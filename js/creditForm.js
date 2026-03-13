@@ -66,7 +66,7 @@ function collectCreditFormData(formEl) {
     direccionTrabajo: _val('ca_work_address'),
     posicion:         _val('ca_position'),
     tiempoTrabajo:    _val('ca_time_job'),
-    ingresos:         _val('ca_monthly_income'),
+    pagoMensual:      _val('ca_monthly_income'),
     frecuenciaPago:   _radio(formEl, 'ca_incomeFreq'),
   };
 
@@ -78,7 +78,7 @@ function collectCreditFormData(formEl) {
     direccionTrabajo: _val('cb_work_address'),
     posicion:         _val('cb_position'),
     tiempoTrabajo:    _val('cb_time_job'),
-    ingresos:         _val('cb_monthly_income'),
+    pagoMensual:      _val('cb_monthly_income'),
     frecuenciaPago:   _radio(formEl, 'cb_incomeFreq'),
   };
 
