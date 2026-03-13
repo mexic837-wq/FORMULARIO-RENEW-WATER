@@ -6,10 +6,8 @@
   <title>RENEW WATER — Portal de Contratos</title>
   <meta name="description" content="Portal digital de contratos y formularios para el equipo de ventas de Renew Water." />
 
-  <!-- ── Estilos ── -->
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/responsive.css" />
+  <!-- ── Stylesheet único ── -->
+  <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
 
@@ -18,7 +16,7 @@
 ============================================================ -->
 <header class="app-header">
   <div class="header-inner">
-    <img src="assets/logo.png" alt="RENEW WATER Logo" class="logo-mark" />
+    <img src="./assets/images/logo.png" alt="RENEW WATER Logo" class="logo-mark" />
     <div class="header-text">
       <h1>RENEW WATER</h1>
       <p>Portal Comercial &amp; Contratos</p>
@@ -682,10 +680,10 @@
   <span id="toast-message">Procesando documento…</span>
 </div>
 
-<!-- ── Scripts (orden importante: config → ui → forms) ── -->
-<script src="js/config.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/forms.js"></script>
+<!-- ── Módulos JS (orden: creditForm y workOrderForm antes que app.js) ── -->
+<script src="./js/creditForm.js" defer></script>
+<script src="./js/workOrderForm.js" defer></script>
+<script src="./js/app.js" defer></script>
 
 </body>
 </html>

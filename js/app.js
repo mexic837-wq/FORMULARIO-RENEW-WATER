@@ -1,0 +1,140 @@
+/* ============================================================
+   RENEW WATER — js/app.js
+   Responsabilidades:
+     · Configuración global (Webhook URL)
+     · Control de pestañas (tab switching)
+     · Sistema de notificaciones toast
+     · Formateo de campos & defaults de fecha
+     · Orquestación: vincula creditForm.js y workOrderForm.js
+   ============================================================ */
+
+/* ════════════════════════════════════════════════════════════
+   CONFIGURACIÓN — ⭐ Solo edita esta sección
+════════════════════════════════════════════════════════════ */
+const APP_CONFIG = {
+  /**
+   * URL del Webhook de n8n donde se envían los formularios.
+   * Reemplaza este valor con tu URL real de n8n.
+   *
+   * Ejemplo:
+   *   webhookUrl: 'https://n8n.tudominio.com/webhook/renew-water'
+   */
+  webhookUrl: 'https://n8n.milian-app.online/webhook/formulario',
+
+  /** Duración (ms) del toast antes de ocultarse */
+  toastDuration: 4500,
+};
+
+/* ════════════════════════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════════════════════════ */
+
+/**
+ * Cambia el panel activo y el botón de pestaña activo.
+ * @param {string} id   - 'credit' | 'workorder'
+ * @param {HTMLElement} btn - Botón que disparó el evento
+ */
+function switchTab(id, btn) {
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+
+  document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════════════════════════ */
+
+/**
+ * Muestra un toast de notificación.
+ * @param {string} msg      - Mensaje a mostrar
+ * @param {'success'|'error'} type - Tipo de notificación
+ * @param {number} [duration]     - Duración en ms
+ */
+function showToast(msg, type = 'success', duration = APP_CONFIG.toastDuration) {
+  const toast = document.getElementById('toast');
+  const icon  = document.getElementById('toast-icon');
+  const text  = document.getElementById('toast-message');
+
+  toast.className = '';
+  icon.textContent = type === 'success' ? '✅' : '❌';
+  text.textContent = msg;
+  toast.classList.add(type, 'show');
+
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+/* ════════════════════════════════════════════════════════════
+   UI HELPERS — Campos condicionales
+════════════════════════════════════════════════════════════ */
+
+/** Muestra/oculta el input de texto "Otro equipo" */
+function toggleOtherEquipment(checkbox) {
+  const wrapper = document.getElementById('other_equipment_wrapper');
+  wrapper.classList.toggle('visible', checkbox.checked);
+  if (!checkbox.checked) document.getElementById('eq_other_text').value = '';
+}
+
+/** Muestra/oculta el input de texto "Otro horario" */
+function toggleScheduleOther(radio) {
+  const wrapper   = document.getElementById('schedule_other_wrapper');
+  const textInput = document.getElementById('wo_schedule_other_text');
+  const isOther   = radio.value === 'Otro' && radio.checked;
+
+  wrapper.classList.toggle('visible', isOther);
+
+  document.querySelectorAll('input[name="wo_schedule"]').forEach(r => {
+    if (r !== radio) {
+      r.addEventListener('change', () => {
+        wrapper.classList.remove('visible');
+        textInput.value = '';
+      }, { once: true });
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   AUTO-FORMAT HELPERS
+════════════════════════════════════════════════════════════ */
+
+/** Formato MM/YY para la expiración de la tarjeta */
+function initCreditCardExpFormat() {
+  const expInput = document.getElementById('wo_cc_exp');
+  if (!expInput) return;
+  expInput.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+    this.value = v;
+  });
+}
+
+/** Establece la fecha de hoy en el campo de fecha de la Orden de Trabajo */
+function setTodayDefault() {
+  const woDate = document.getElementById('wo_date');
+  if (woDate && !woDate.value) {
+    woDate.value = new Date().toISOString().split('T')[0];
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   INICIALIZACIÓN
+════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initCreditCardExpFormat();
+  setTodayDefault();
+
+  // Vincular formularios a sus handlers (definidos en creditForm.js y workOrderForm.js)
+  const creditForm    = document.getElementById('form-credit');
+  const workOrderForm = document.getElementById('form-workorder');
+
+  if (creditForm)    creditForm.addEventListener('submit', handleCreditFormSubmit);
+  if (workOrderForm) workOrderForm.addEventListener('submit', handleWorkOrderSubmit);
+});
