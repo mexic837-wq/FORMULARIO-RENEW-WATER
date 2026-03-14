@@ -19,47 +19,42 @@
 function collectWorkOrderData(formEl) {
   const data = {};
 
-  // ── Sección A: Datos del Comprador ──
+  // ── Objeto comprador ──
   data.comprador = {
-    fecha:     _woVal('wo_date'),
     nombre:    _woVal('wo_purchaser'),
+    segundoNombre: _woVal('wo_second_purchaser'),
     telefono:  _woVal('wo_phone'),
     email:     _woVal('wo_email'),
     direccion: _woVal('wo_address'),
     ciudad:    _woVal('wo_city'),
     estado:    _woVal('wo_state'),
     zipCode:   _woVal('wo_zip'),
-    segundoNombre: _woVal('wo_second_purchaser'),
   };
 
-  // ── Sección B: Equipos a Instalar ──
+  // ── Objeto equipos ──
   data.equipos = {
     suavizadorCasa:  _woChecked('eq_softener'),
-    osmosisReverso:  _woChecked('eq_ro'),
+    osmosisReversa:  _woChecked('eq_ro'),
     aguaAlcalina:    _woChecked('eq_alkaline'),
     aguaPozo:        _woChecked('eq_well'),
-    otro:            _woChecked('eq_other'),
     otro_texto:      _woVal('eq_other_text'),
   };
 
-  // ── Sección C: Instrucciones de Instalación ──
+  // ── Objeto instalacion ──
   data.instalacion = {
     fechaEstimada:        _woVal('wo_install_date'),
     personasEnCasa:       _woVal('wo_people'),
     tipoPiso:             _woRadio(formEl, 'wo_floor'),
-    piso_otro_texto:      _woVal('wo_floor_other_text'),
     conexionRefrigerador: _woRadio(formEl, 'wo_icemaker'),
     horario:              _woRadio(formEl, 'wo_schedule'),
-    horarioOtro:          _woVal('wo_schedule_other_text'),
     granossDureza:        _woVal('wo_hardness'),
     instruccionesEspeciales: _woVal('wo_special_instructions'),
   };
 
-  // ── Sección D: Finanzas y Pago ──
+  // ── Objeto finanzas ──
   data.finanzas = {
     precioContado:       _woVal('wo_cash_price'),
     instalacion:         _woVal('wo_installation'),
-    totalContado:        _woVal('wo_total_cash_price'),
     cuotaInicial:        _woVal('wo_down_payment'),
     saldo_financiado:    _woVal('wo_balance_financed'),
     cantidad_financiar:  _woVal('wo_amount_financed'),
@@ -68,28 +63,34 @@ function collectWorkOrderData(formEl) {
     cargosFinancieros:   _woVal('wo_finance_charge'),
     totalPagos:          _woVal('wo_total_payments'),
     tarjetaMonto:        _woVal('wo_cc_amount'),
-    tarjetaNumero:       _woVal('wo_cc_number'),
-    tarjetaExpiracion:   _woVal('wo_cc_exp'),
-    tarjetaCvv:          _woVal('wo_cc_cvv'),
   };
 
-  // ── Representante de Ventas y Firmas ──
+  // ── Objeto tarjeta ──
+  data.tarjeta = {
+    numero:     _woVal('wo_cc_number'),
+    expiracion: _woVal('wo_cc_exp'),
+    cvv:        _woVal('wo_cc_cvv'),
+  };
+
+  // ── Campo raíz ──
   data.nombre_dealer = _woVal('wo_rep_name');
+
+  // ── Objeto firmas ──
   data.firmas = {};
   
-  const canvasRep = document.getElementById('wo-firma-rep');
-  data.firmas.representante = (canvasRep && checkSignatureDrawn('wo-firma-rep')) 
-    ? canvasRep.toDataURL('image/png') : "";
-
   const canvasComprador = document.getElementById('wo-firma-comprador');
-  data.firmas.comprador = (canvasComprador && checkSignatureDrawn('wo-firma-comprador')) 
+  data.firmas.comprador_1 = (canvasComprador && checkSignatureDrawn('wo-firma-comprador')) 
     ? canvasComprador.toDataURL('image/png') : "";
 
   const canvasComprador2 = document.getElementById('wo-firma-comprador-2');
   data.firmas.comprador_2 = (canvasComprador2 && checkSignatureDrawn('wo-firma-comprador-2')) 
     ? canvasComprador2.toDataURL('image/png') : "";
 
-  // Metadatos
+  const canvasRep = document.getElementById('wo-firma-rep');
+  data.firmas.representante = (canvasRep && checkSignatureDrawn('wo-firma-rep')) 
+    ? canvasRep.toDataURL('image/png') : "";
+
+  // Metadatos internos
   data._tipo      = 'orden_trabajo';
   data._timestamp = new Date().toISOString();
 
