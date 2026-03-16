@@ -353,6 +353,37 @@ input.error         { border-color: var(--error); box-shadow: 0 0 0 3px rgba(239
 /* Fix date/time on iOS */
 input[type="date"] { cursor: pointer; }
 
+/* Password Visibility Toggle */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .eye-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  z-index: 5;
+  transition: color var(--ease);
+}
+
+.input-with-icon .eye-toggle:hover {
+  color: var(--primary);
+}
+
+.input-with-icon input {
+  padding-right: 46px !important;
+}
+
 /* ════════════════════════════════════════════════════════════
    11. SUB-SECTION LABELS & DIVIDERS
 ════════════════════════════════════════════════════════════ */
@@ -392,6 +423,15 @@ input[type="date"] { cursor: pointer; }
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.25rem;
+  border: 1px solid transparent;
+  transition: all var(--ease);
+}
+
+.pill-group.error {
+  border-color: var(--error);
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.05);
 }
 
 .pill-group input[type="radio"],

@@ -121,9 +121,27 @@ function validateCreditForm(formEl) {
   let valid = true;
   formEl.querySelectorAll('[required]').forEach(field => {
     field.classList.remove('error');
-    if (!field.value.trim()) {
-      field.classList.add('error');
+    // Si el padre es pill-group, quitar error del padre
+    if (field.parentElement.classList.contains('pill-group')) {
+      field.parentElement.classList.remove('error');
+    }
+
+    let isInvalid = false;
+    if (field.type === 'radio' || field.type === 'checkbox') {
+      const name = field.name;
+      const checked = formEl.querySelector(`input[name="${name}"]:checked`);
+      if (!checked) isInvalid = true;
+    } else {
+      if (!field.value.trim()) isInvalid = true;
+    }
+
+    if (isInvalid) {
       valid = false;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        field.parentElement.classList.add('error');
+      } else {
+        field.classList.add('error');
+      }
     }
   });
   return valid;

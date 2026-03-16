@@ -110,9 +110,26 @@ function validateWorkOrderForm(formEl) {
   let valid = true;
   formEl.querySelectorAll('[required]').forEach(field => {
     field.classList.remove('error');
-    if (!field.value.trim()) {
-      field.classList.add('error');
+    if (field.parentElement.classList.contains('pill-group')) {
+      field.parentElement.classList.remove('error');
+    }
+
+    let isInvalid = false;
+    if (field.type === 'radio' || field.type === 'checkbox') {
+      const name = field.name;
+      const checked = formEl.querySelector(`input[name="${name}"]:checked`);
+      if (!checked) isInvalid = true;
+    } else {
+      if (!field.value.trim()) isInvalid = true;
+    }
+
+    if (isInvalid) {
       valid = false;
+      if (field.type === 'radio' || field.type === 'checkbox') {
+        field.parentElement.classList.add('error');
+      } else {
+        field.classList.add('error');
+      }
     }
   });
   return valid;
@@ -144,7 +161,13 @@ function resetWorkOrderForm(formEl) {
 
   // Re-establecer fecha de hoy
   const woDate = document.getElementById('wo_date');
-  if (woDate) woDate.value = new Date().toISOString().split('T')[0];
+  if (woDate) {
+    const today = new Date();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    woDate.value = `${mm}/${dd}/${yyyy}`;
+  }
 }
 
 /* ════════════════════════════════════════════════════════════

@@ -138,8 +138,40 @@ function initCreditCardExpFormat() {
 function setTodayDefault() {
   const woDate = document.getElementById('wo_date');
   if (woDate && !woDate.value) {
-    woDate.value = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    woDate.value = `${mm}/${dd}/${yyyy}`;
   }
+}
+
+/** Toggle visibilidad de contraseña */
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  const btn = input.nextElementSibling;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🔒';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+/** Formato MM/DD/YYYY para entradas de fecha */
+function initDateMasks() {
+  document.querySelectorAll('.date-mask').forEach(input => {
+    input.addEventListener('input', function(e) {
+      let v = this.value.replace(/\D/g, '').substring(0, 8);
+      if (v.length > 4) {
+        v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4);
+      } else if (v.length > 2) {
+        v = v.substring(0, 2) + '/' + v.substring(2);
+      }
+      this.value = v;
+    });
+  });
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -147,6 +179,7 @@ function setTodayDefault() {
 ════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initCreditCardExpFormat();
+  initDateMasks();
   setTodayDefault();
 
   // Vincular formularios a sus handlers (definidos en creditForm.js y workOrderForm.js)
