@@ -205,6 +205,8 @@ async function handleCreditFormSubmit(e) {
 
   const payload = collectCreditFormData(form);
 
+  try {
+    console.log('Enviando Aplicación de Crédito a:', APP_CONFIG.webhookUrl);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
 

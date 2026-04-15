@@ -210,6 +210,8 @@ async function handleWorkOrderSubmit(e) {
 
   const payload = collectWorkOrderData(form);
 
+  try {
+    console.log('Enviando Orden de Trabajo a:', APP_CONFIG.webhookUrl);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
 
